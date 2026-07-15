@@ -28,6 +28,20 @@ app.get('/db-test', async (req, res) => {
   }
 });
 
+const { findShortestPath } = require('./services/pathfinder'); // <-- Import at the top or above the route
+
+app.get('/route', async (req, res) => {
+  try {
+    const { start, end } = req.query; // e.g. /route?start=1&end=2
+    if (!start || !end) return res.status(400).json({ error: 'start and end node ids required' });
+
+    const result = await findShortestPath(parseInt(start), parseInt(end));
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
